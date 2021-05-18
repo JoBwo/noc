@@ -1,30 +1,71 @@
+<div class="topnav">
+	<div on:click={e => page = 0} class="{page === 0 ? "active" : ""}">{home}</div>
+	<div on:click={e => page = 1} class="{page === 1 ? "active" : ""}">{radius}</div>
+</div>
+<div class="headblock"></div>
+
+<div class="inner-app">
+	{#if page === 0}
+		<p>{home}</p>
+	{:else if page === 1}
+		<Radius/>
+	{/if}
+</div>
+
 <script>
-	export let name;
+	import Radius from './Radius.svelte';
+
+	let page = 1;
+	let home = "Startseite";
+	let radius = "Radius";
 </script>
 
-<main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
-
 <style>
-	main {
+	:root{
+	--dark-green: #007C46;
+	--middle-green: #009265;
+	--light-green: #9AC6AD;
+	--bright-green: #CEE2D6;
+	--dark-gray: #444;
+	}
+
+	.topnav {
+		background-color: var(--dark-gray);
+		
+		overflow: hidden;
+
+		position: fixed;
+		top: 0px;
+		left: 0px;
+		width: 100%;
+	}
+
+	.topnav div{
+		float: left;
+		color: #f2f2f2;
 		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
+		padding: 14px 16px;
+		text-decoration: none;
+		font-size: 20px;
 	}
 
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
+	.topnav .active {
+		background-color: var(--middle-green);
 	}
 
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
+	.topnav div:not(.active):hover{
+		background-color: var(--dark-green);
+	}
+
+	.headblock {
+		height: 60px;
+	}
+
+	.inner-app {
+		width: calc(100% - 40px);
+		height: calc(100% - 100px);
+		border: 1px solid gray;
+		padding: 10px;
+		position: fixed;
 	}
 </style>
