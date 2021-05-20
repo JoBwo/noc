@@ -28,9 +28,7 @@
 	}
 	if(isset(urlParams.get('user'))){
 		let user = urlParams.get('user');
-		if(user !== null){
-			selectedUser = user;
-		}
+		selectedUser = user;
 	}
 
 	function setHomePage(){
@@ -50,7 +48,7 @@
 	}
 
 	function isset(v){
-		return (v !== 'undefined');
+		return (v !== 'undefined' && v !== null);
 	}
 
 	

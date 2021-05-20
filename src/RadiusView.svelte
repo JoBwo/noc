@@ -1,98 +1,134 @@
 <div style="overflow: auto; height: 100%;">
     <h2>Radius Account {user_name}</h2>
-    <div class="head-info">
-        <div class="user-table">
-            <table class="user-info">
+    {#if rpage === 0}
+        <div class="head-info">
+            <div class="user-table">
+                <table class="user-info">
+                    <tr>
+                        <td>Benutzername:</td>
+                        <td>{user_name}</td>
+                    </tr>
+                    <tr>
+                        <td>Cleartext-Password:</td>
+                        <td>{user_cleartext_password}</td>
+                    </tr>
+                    <tr>
+                        <td>Mac-Adresse:</td>
+                        <td>{user_mac}</td>
+                    </tr>
+                    <tr>
+                        <td>Status:</td>
+                        <td>
+                            {user_blocked ? "Inaktiv" : "Aktiv"}
+                            <span style="padding-left: 10px;">
+                                {#if user_blocked}
+                                    <button class="noc-button" on:click={activateUser}>Aktivieren</button>
+                                {:else}
+                                    <button class="noc-button" on:click={deactivateUser}>Deaktivieren</button>
+                                {/if}
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="einwahl">
+                <div>
+                    <p>
+                        Aktuelle Einwahl:
+                        {#if user_logon['readable'] == "0"}
+                            <span style="color: red;">{user_logon['logon']}</span>
+                        {:else}
+                            <span style="color: var(--middle-green);">{user_logon['logon']}, {user_logon['readable']}</span>
+                        {/if}
+                    </p>
+                </div>
+                <div>
+                    <p>
+                        Letzte Einwahl:
+                        {#if user_last_logon['logon'] == "Vorherige Einwahl"}
+                            {user_last_logon['readable']}
+                        {:else}
+                            {user_last_logon['logon']}
+                        {/if}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <br><br>
+        <div class="right-button">
+            <button on:click={updateAll}>Daten aktualisieren</button>
+        </div>
+
+        <table class="attr-table">
+            <tr>
+                <th colspan="5" style="text-align: left;">CHECK-Items</th>
+            </tr>
+            <tr><th>ID</th><th>ATTRIBUTE</th><th>OP</th><th>VALUE</th><th></th></tr>
+            {#each check_items as check}
                 <tr>
-                    <td>Benutzername:</td>
-                    <td>{user_name}</td>
-                </tr>
-                <tr>
-                    <td>Cleartext-Password:</td>
-                    <td>{user_cleartext_password}</td>
-                </tr>
-                <tr>
-                    <td>Mac-Adresse:</td>
-                    <td>{user_mac}</td>
-                </tr>
-                <tr>
-                    <td>Status:</td>
+                    <td>{check.id}</td>
+                    <td>{check.attribute}</td>
+                    <td>{check.op}</td>
+                    <td>{check.value}</td>
                     <td>
-                        {user_blocked ? "Inaktiv" : "Aktiv"}
-                        <span style="padding-left: 10px;">
-                            {#if user_blocked}
-                                <button class="noc-button" on:click={activateUser}>Aktivieren</button>
-                            {:else}
-                                <button class="noc-button" on:click={deactivateUser}>Deaktivieren</button>
-                            {/if}
-                        </span>
+                        {#if check.del == "true"}
+                            <button class="del-button" on:click={() => removeEntry("radcheck", check.id)}>&#10006;</button>
+                        {/if}
                     </td>
                 </tr>
-            </table>
-        </div>
-        <div class="einwahl">
-            <div>
-                <p>
-                    Aktuelle Einwahl:
-                    {#if user_logon['readable'] == "0"}
-                        <span style="color: red;">{user_logon['logon']}</span>
-                    {:else}
-                        <span style="color: var(--middle-green);">{user_logon['logon']}, {user_logon['readable']}</span>
-                    {/if}
-                </p>
-            </div>
-            <div>
-                <p>
-                    Letzte Einwahl:
-                    {#if user_last_logon['logon'] == "Vorherige Einwahl"}
-                        {user_last_logon['readable']}
-                    {:else}
-                        {user_last_logon['logon']}
-                    {/if}
-                </p>
-            </div>
-        </div>
-    </div>
+            {/each}
+        </table>
 
-    <br><br>
-    <div class="right-button">
-        <button on:click={updateAll}>Daten aktualisieren</button>
-    </div>
+        <br><br>
 
-    <table class="attr-table">
-        <tr>
-            <th colspan="4" style="text-align: left;">CHECK-Items</th>
-        </tr>
-        <tr><th>ID</th><th>ATTRIBUTE</th><th>OP</th><th>VALUE</th></tr>
-        {#each check_items as check}
+        <table class="attr-table">
             <tr>
-                <td>{check.id}</td>
-                <td>{check.attribute}</td>
-                <td>{check.op}</td>
-                <td>{check.value}</td>
+                <th colspan="5" style="text-align: left;">REPLY-Items</th>
             </tr>
-        {/each}
-    </table>
+            <tr><th>ID</th><th>ATTRIBUTE</th><th>OP</th><th>VALUE</th><th></th></tr>
+            {#each reply_items as reply}
+                <tr>
+                    <td>{reply.id}</td>
+                    <td>{reply.attribute}</td>
+                    <td>{reply.op}</td>
+                    <td>{reply.value}</td>
+                    <td>
+                        {#if reply.del == "true"}
+                            <button class="del-button" on:click={() => removeEntry("radreply", reply.id)}>&#10006;</button>
+                        {/if}
+                    </td>
+                </tr>
+            {/each}
+        </table>
 
-    <br><br>
-
-    <table class="attr-table">
-        <tr>
-            <th colspan="4" style="text-align: left;">REPLY-Items</th>
-        </tr>
-        <tr><th>ID</th><th>ATTRIBUTE</th><th>OP</th><th>VALUE</th></tr>
-        {#each reply_items as reply}
-            <tr>
-                <td>{reply.id}</td>
-                <td>{reply.attribute}</td>
-                <td>{reply.op}</td>
-                <td>{reply.value}</td>
-            </tr>
-        {/each}
-    </table>
+        <div class="addbutton">
+            <button on:click={e => rpage = 1}>Eintrag hinzufügen</button>
+        </div>
+    {:else if rpage === 1}
+        <h3>Neuen Wert speichern</h3><br>
+        Tabelle:
+        <select bind:value={new_table} required>
+            <option value="radreply">Reply</option>
+            <option value="radcheck">Check</option>
+        </select><br>
+        Attribut:
+        <select bind:value={new_attribute} required>
+            <option value="MAC">MAC-Adresse</option>
+            <option value="Framed-IP-Adresse">Framed-IP-Adresse</option>
+        </select><br>
+        Operator:
+        <select bind:value={new_operator} required>
+            <option value="=">=</option>
+            <option value=":=">:=</option>
+        </select><br>
+        Wert:
+        <input type="text" bind:value={new_value}><br>
+        <button on:click={saveNewEntry}>Speichern</button>
+        <button on:click={e => rpage = 0}>Abbrechen</button>
+    {/if}
 </div>
 <script>
-
     export let user_name = "";
     let user_cleartext_password = "";
     let user_blocked = "";
@@ -104,8 +140,61 @@
     let user_logon = {'logon': "", 'readable': ""};
     let user_last_logon = {'logon': "", 'readable': ""};
 
+    let rpage = 0;
+
+    let new_table;
+    let new_attribute;
+    let new_operator;
+    let new_value;
+
     if(user_name != ""){
         updateAll();
+    }
+
+    const search = window.location.search;
+	const urlParams = new URLSearchParams(search);
+    if(isset(urlParams.get("rpage"))){
+        rpage = parseInt(urlParams.get("rpage"));
+    }
+
+    function isset(v){
+		return (typeof v !== "undefined" && v !== null);
+	}
+
+    async function removeEntry(t, i){
+        var data = {username: user_name, action: "removedata", table: t, id: i};
+        var fd = new FormData();
+        for(var i in data){
+            fd.append(i,data[i]);
+        }
+		const res = await fetch('https://testing.inspiration-feuerwehr.de/radius.php', {
+			method: 'POST',
+            body: fd
+		})
+		
+		const as = await res.json();
+        if(as['worked'] == "1"){
+            rpage = 0;
+            updateAll();
+        }
+    }
+
+    async function saveNewEntry(){
+        var data = {username: user_name, action: "adddata", table: new_table, attribute: new_attribute, operator: new_operator, value: new_value};
+        var fd = new FormData();
+        for(var i in data){
+            fd.append(i,data[i]);
+        }
+		const res = await fetch('https://testing.inspiration-feuerwehr.de/radius.php', {
+			method: 'POST',
+            body: fd
+		})
+		
+		const as = await res.json();
+        if(as['worked'] == "1"){
+            rpage = 0;
+            updateAll();
+        }
     }
 
     function updateAll(){
@@ -204,7 +293,7 @@
 
 <style>
     table, td, th, tr{
-        border: 1px solid gray;
+        border: 2px solid lightgray;
         border-collapse: collapse;
         padding: 10px 14px;
     }
@@ -281,5 +370,22 @@
         margin: 4px;
         float: right;
         /*max-width: 50%;*/
+    }
+
+    .addbutton{
+        float: right;
+        margin-right: 40px;
+        margin-top: 10px;
+    }
+
+    .del-button{
+        width: 30px;
+        height: 30px;
+        margin: 0px;
+        border: 1px solid red;
+        background: lightpink;
+        color: white;
+        text-align: center;
+        vertical-align: center;
     }
 </style>
