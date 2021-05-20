@@ -1,32 +1,58 @@
 <div style="overflow: auto; height: 100%;">
     <h2>Radius Account {user_name}</h2>
-    <table class="user-info">
-        <tr>
-            <td>Benutzername:</td>
-            <td>{user_name}</td>
-        </tr>
-        <tr>
-            <td>Cleartext-Password:</td>
-            <td>{user_cleartext_password}</td>
-        </tr>
-        <tr>
-            <td>Mac-Adresse:</td>
-            <td>{user_mac}</td>
-        </tr>
-        <tr>
-            <td>Status:</td>
-            <td>
-                {user_blocked ? "Inaktiv" : "Aktiv"}
-                <span style="padding-left: 10px;">
-                    {#if user_blocked}
-                        <button class="noc-button" on:click={activateUser}>Aktivieren</button>
+    <div class="head-info">
+        <div class="user-table">
+            <table class="user-info">
+                <tr>
+                    <td>Benutzername:</td>
+                    <td>{user_name}</td>
+                </tr>
+                <tr>
+                    <td>Cleartext-Password:</td>
+                    <td>{user_cleartext_password}</td>
+                </tr>
+                <tr>
+                    <td>Mac-Adresse:</td>
+                    <td>{user_mac}</td>
+                </tr>
+                <tr>
+                    <td>Status:</td>
+                    <td>
+                        {user_blocked ? "Inaktiv" : "Aktiv"}
+                        <span style="padding-left: 10px;">
+                            {#if user_blocked}
+                                <button class="noc-button" on:click={activateUser}>Aktivieren</button>
+                            {:else}
+                                <button class="noc-button" on:click={deactivateUser}>Deaktivieren</button>
+                            {/if}
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="einwahl">
+            <div>
+                <p>
+                    Aktuelle Einwahl:
+                    {#if user_logon['readable'] == "0"}
+                        <span style="color: red;">{user_logon['logon']}</span>
                     {:else}
-                        <button class="noc-button" on:click={deactivateUser}>Deaktivieren</button>
+                        <span style="color: var(--middle-green);">{user_logon['logon']}, {user_logon['readable']}</span>
                     {/if}
-                </span>
-            </td>
-        </tr>
-    </table>
+                </p>
+            </div>
+            <div>
+                <p>
+                    Letzte Einwahl:
+                    {#if user_last_logon['logon'] == "Vorherige Einwahl"}
+                        {user_last_logon['readable']}
+                    {:else}
+                        {user_last_logon['logon']}
+                    {/if}
+                </p>
+            </div>
+        </div>
+    </div>
 
     <br><br>
     <div class="right-button">
@@ -75,11 +101,8 @@
     let check_items = [];
     let reply_items = [];
 
-    let test;
-    let test2 = [
-        {"value": "val"},
-        {"value": "val"}
-    ];
+    let user_logon = {'logon': "", 'readable': ""};
+    let user_last_logon = {'logon': "", 'readable': ""};
 
     if(user_name != ""){
         updateAll();
@@ -89,6 +112,7 @@
         updateUserData();
         updateData("check");
         updateData("reply");
+        updateUserLogon();
     }
 
     function activateUser(){
@@ -120,6 +144,22 @@
             }
             updateData("check");
         }
+    }
+
+    async function updateUserLogon(){
+        var data = {username: user_name, action: 'isloggedon'};
+        var fd = new FormData();
+        for(var i in data){
+            fd.append(i,data[i]);
+        }
+		const res = await fetch('https://testing.inspiration-feuerwehr.de/radius.php', {
+			method: 'POST',
+            body: fd
+		})
+
+        const as = await res.json();
+        user_logon = {'logon': as['current'], 'readable': as['current-readable']};
+        user_last_logon = {'logon': as['last'], 'readable': as['last-readable']};
     }
 
     async function updateUserData () {
@@ -204,6 +244,10 @@
         width: 200px;
     }
 
+    .user-table{
+        max-width: 50%;
+    }
+
     .attr-table{
         width: calc(100% - 60px);
     }
@@ -215,5 +259,27 @@
 
     .right-button button{
         float: right;
+    }
+
+    .head-info div{
+        display: inline-block;
+    }
+
+    .einwahl{
+        float: right;
+        margin-right: 80px;
+        max-width: 40%;
+    }
+
+    .einwahl div{
+        border: 2px solid gray;
+        border-radius: 10px;
+
+        padding: 0px 20px;
+        font-size: 20px;
+
+        margin: 4px;
+        float: right;
+        /*max-width: 50%;*/
     }
 </style>

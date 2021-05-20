@@ -1,6 +1,6 @@
 <div class="topnav">
-	<div on:click={e => page = 0} class="{page === 0 ? "active" : ""}">{home}</div>
-	<div on:click={e => page = 1} class="{page === 1 ? "active" : ""}">{radius}</div>
+	<div on:click={setHomePage} class="{page === 0 ? "active" : ""}">{home}</div>
+	<div on:click={setRadiusPage} class="{page === 1 ? "active" : ""}">{radius}</div>
 </div>
 <div class="headblock"></div>
 
@@ -8,16 +8,52 @@
 	{#if page === 0}
 		<p>{home}</p>
 	{:else if page === 1}
-		<Radius/>
+		<Radius selectedUser={selectedUser}/>
 	{/if}
 </div>
 
 <script>
 	import Radius from './Radius.svelte';
 
-	let page = 1;
+	let page = 0;
 	let home = "Startseite";
 	let radius = "Radius";
+	let selectedUser = "";
+
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams(queryString);
+
+	if(isset(urlParams.get('page'))){
+		page = parseInt(urlParams.get('page'));
+	}
+	if(isset(urlParams.get('user'))){
+		let user = urlParams.get('user');
+		if(user !== null){
+			selectedUser = user;
+		}
+	}
+
+	function setHomePage(){
+		changePage(0);
+	}
+
+	function setRadiusPage(){
+		changePage(1);
+	}
+	
+
+	function changePage(p){
+		page = p;
+		const urlParams = new URLSearchParams();
+		urlParams.set('page', page);
+		window.location.search = urlParams.toString();
+	}
+
+	function isset(v){
+		return (v !== 'undefined');
+	}
+
+	
 </script>
 
 <style>

@@ -6,7 +6,7 @@
         <button on:click="{returnToOverview}">&#8592; Zurück zur Übersicht</button>
         <RadiusView user_name={selectedUser}/>
     {:else}
-        <div on:click="{e => selectedUser = "test1"}" class="link-mockup">Test1 laden</div>
+        <div on:click="{() => loadUser("test1")}" class="link-mockup">Test1 laden</div>
     {/if}
 
 </div>
@@ -14,11 +14,29 @@
 <script>
     import RadiusView from './RadiusView.svelte';
 
-    let selectedUser = "";
+    export let selectedUser = "";
+
 
     function returnToOverview(){
         selectedUser = "";
-    }    
+        updateUser();
+    }
+
+    function loadUser(us){
+        selectedUser = us;
+        updateUser();
+    }
+    
+    function updateUser() {
+		const search = window.location.search;
+		const urlParams = new URLSearchParams(search);
+		if(selectedUser === ""){
+            urlParams.delete('user');
+        }else {
+            urlParams.set('user', selectedUser);
+        }
+		window.location.search = urlParams.toString();
+    }
 </script>
 
 <style>
