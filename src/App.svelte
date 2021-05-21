@@ -1,6 +1,7 @@
 <div class="topnav">
-	<div on:click={setHomePage} class="{page === 0 ? "active" : ""}">{home}</div>
-	<div on:click={setRadiusPage} class="{page === 1 ? "active" : ""}">{radius}</div>
+	<div on:click={() => changePage(0)} class="{page === 0 ? "active noselect" : "noselect"}">{home}</div>
+	<div on:click={() => changePage(1)} class="{page === 1 ? "active noselect" : "noselect"}">{radius}</div>
+	<div on:click={() => changePage(2)} class="{page === 2 ? "active noselect" : "noselect"}">{contract}</div>
 </div>
 <div class="headblock"></div>
 
@@ -8,17 +9,20 @@
 	{#if page === 0}
 		<p>{home}</p>
 	{:else if page === 1}
-		<Radius selectedUser={selectedUser}/>
+		<Radius/>
+	{:else if page === 2}
+		<Contract/>
 	{/if}
 </div>
 
 <script>
 	import Radius from './Radius.svelte';
+	import Contract from './Contract.svelte';
 
 	let page = 0;
 	let home = "Startseite";
 	let radius = "Radius";
-	let selectedUser = "";
+	let contract = "Verträge";
 
 	const queryString = window.location.search;
 	const urlParams = new URLSearchParams(queryString);
@@ -26,19 +30,6 @@
 	if(isset(urlParams.get('page'))){
 		page = parseInt(urlParams.get('page'));
 	}
-	if(isset(urlParams.get('user'))){
-		let user = urlParams.get('user');
-		selectedUser = user;
-	}
-
-	function setHomePage(){
-		changePage(0);
-	}
-
-	function setRadiusPage(){
-		changePage(1);
-	}
-	
 
 	function changePage(p){
 		page = p;
@@ -102,4 +93,8 @@
 		padding: 10px;
 		position: fixed;
 	}
+
+	.noselect{
+        user-select: none;
+    }
 </style>

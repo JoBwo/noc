@@ -1,5 +1,12 @@
-<div style="overflow: auto; height: 100%;">
+<div>
     <h2>Radius Account {user_name}</h2>
+
+    <div class="radius-nav">
+        <span class={rpage == 0 ? "active noselect" : "noselect"} on:click={() => changePage(0)}>Übersicht</span>
+        <span class={rpage == 2 ? "active noselect" : "noselect"} on:click={() => changePage(2)}>Einwahldaten</span>
+    </div><br>
+
+    
     {#if rpage === 0}
         <div class="head-info">
             <div class="user-table">
@@ -39,6 +46,7 @@
                             <span style="color: red;">{user_logon['logon']}</span>
                         {:else}
                             <span style="color: var(--middle-green);">{user_logon['logon']}, {user_logon['readable']}</span>
+                            <button on:click={disconnectUser} class="disconnect">Trennen</button>
                         {/if}
                     </p>
                 </div>
@@ -106,26 +114,48 @@
             <button on:click={e => rpage = 1}>Eintrag hinzufügen</button>
         </div>
     {:else if rpage === 1}
-        <h3>Neuen Wert speichern</h3><br>
-        Tabelle:
-        <select bind:value={new_table} required>
-            <option value="radreply">Reply</option>
-            <option value="radcheck">Check</option>
-        </select><br>
-        Attribut:
-        <select bind:value={new_attribute} required>
-            <option value="MAC">MAC-Adresse</option>
-            <option value="Framed-IP-Adresse">Framed-IP-Adresse</option>
-        </select><br>
-        Operator:
-        <select bind:value={new_operator} required>
-            <option value="=">=</option>
-            <option value=":=">:=</option>
-        </select><br>
-        Wert:
-        <input type="text" bind:value={new_value}><br>
-        <button on:click={saveNewEntry}>Speichern</button>
-        <button on:click={e => rpage = 0}>Abbrechen</button>
+        <div class="new-entry">
+            <h3>Neuen Wert speichern</h3><br>
+            Tabelle:
+            <select bind:value={new_table} required>
+                <option value="radreply">Reply</option>
+                <option value="radcheck">Check</option>
+            </select><br>
+            Attribut:
+            <select bind:value={new_attribute} required>
+                <option value="MAC">MAC-Adresse</option>
+                <option value="Framed-IP-Adresse">Framed-IP-Adresse</option>
+            </select><br>
+            Operator:
+            <select bind:value={new_operator} required>
+                <option value="=">=</option>
+                <option value=":=">:=</option>
+            </select><br>
+            Wert:
+            <input type="text" bind:value={new_value}><br>
+            <button on:click={saveNewEntry} class="positive">Speichern</button>
+            <button on:click={e => rpage = 0} class="negative">Abbrechen</button>
+        </div>
+    {:else if rpage === 2}
+        <button class="update-button" on:click={updateEinwahl}>Aktualisieren</button>
+        <table class="attr-table">
+            <tr>
+                <th>NAS-IP</th>
+                <th>NAS-Port</th>
+                <th>Access-Accept</th>
+                <th>Ende</th>
+                <th>Dauer</th>
+            </tr>
+            {#each einwahlen as einwahl}
+            <tr>
+                <td>{einwahl.nasip}</td>
+                <td>{einwahl.nasport}</td>
+                <td>{einwahl.accessaccept}</td>
+                <td>{einwahl.ende}</td>
+                <td>{einwahl.dauer}</td>
+            </tr>
+            {/each}
+        </table>
     {/if}
 </div>
 <script>
@@ -147,6 +177,8 @@
     let new_operator;
     let new_value;
 
+    let einwahlen = [];
+
     if(user_name != ""){
         updateAll();
     }
@@ -155,6 +187,15 @@
 	const urlParams = new URLSearchParams(search);
     if(isset(urlParams.get("rpage"))){
         rpage = parseInt(urlParams.get("rpage"));
+    }
+
+
+    function changePage(p){
+        rpage = p;
+        const search = window.location.search;
+	    const urlParams = new URLSearchParams(search);
+        urlParams.set("rpage", p);
+        window.location.search = urlParams.toString();
     }
 
     function isset(v){
@@ -193,6 +234,10 @@
 		const as = await res.json();
         if(as['worked'] == "1"){
             rpage = 0;
+            new_attribute = "";
+            new_operator = "";
+            new_table = "";
+            new_value = "";
             updateAll();
         }
     }
@@ -202,6 +247,7 @@
         updateData("check");
         updateData("reply");
         updateUserLogon();
+        updateEinwahl();
     }
 
     function activateUser(){
@@ -210,6 +256,23 @@
 
     function deactivateUser(){
         setActivation("deactivate");
+    }
+
+    async function disconnectUser(){
+        var data = {username: user_name, action: "disconnect"};
+        var fd = new FormData();
+        for(var i in data){
+            fd.append(i,data[i]);
+        }
+		const res = await fetch('https://testing.inspiration-feuerwehr.de/radius.php', {
+			method: 'POST',
+            body: fd
+		})
+		
+		const as = await res.json();
+        if(as['worked'] == "1"){
+            updateAll();
+        }
     }
 
     async function setActivation(type){
@@ -285,6 +348,20 @@
         }else{
             reply_items = await res.json();
         }
+    }
+
+    async function updateEinwahl(){
+        var data = {username: user_name, action: 'geteinwahl'};
+        var fd = new FormData();
+        for(var i in data){
+            fd.append(i,data[i]);
+        }
+		const res = await fetch('https://testing.inspiration-feuerwehr.de/radius.php', {
+			method: 'POST',
+            body: fd
+		})
+		
+        einwahlen = await res.json();
     }
 
     // JSON Array im Format:
@@ -369,6 +446,7 @@
 
         margin: 4px;
         float: right;
+        width: 561px;
         /*max-width: 50%;*/
     }
 
@@ -387,5 +465,65 @@
         color: white;
         text-align: center;
         vertical-align: center;
+    }
+
+    .radius-nav{
+        margin: 10px 20px;
+        width: calc(100% - 40px);
+        border-bottom: 2px solid lightgray;
+    }
+
+    .radius-nav span{
+        margin: 0px 10px;
+        font-size: 18px;
+        color: lightgray;
+    }
+
+    .radius-nav .active{
+        color: var(--middle-green);
+    }
+
+    .update-button{
+        float: right;
+        margin-right: 40px;
+    }
+
+    .noselect{
+        user-select: none;
+    }
+
+    .new-entry{
+        margin: 0px 20px;
+        width: 600px;
+    }
+
+    .new-entry input[type=text], select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .new-entry button {
+        width: 100%;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .positive{
+        background-color: var(--middle-green);
+        color: white;
+    }
+
+    .disconnect{
+        padding: 2px 5px;
+        margin-top: 12px;
+        margin-bottom: 0px;
     }
 </style>
