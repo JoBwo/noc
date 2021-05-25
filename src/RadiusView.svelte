@@ -183,6 +183,8 @@
         updateAll();
     }
 
+    document.title = "Radius Account " + user_name;
+
     const search = window.location.search;
 	const urlParams = new URLSearchParams(search);
     if(isset(urlParams.get("rpage"))){

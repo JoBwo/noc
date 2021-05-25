@@ -4,7 +4,6 @@
 
     {#if selectedUser !== ""}
         <button on:click="{returnToOverview}">&#8592; Zurück zur Übersicht</button>
-        
         <RadiusView user_name={selectedUser}/>
     {:else}
         <h2>Radius Accounts</h2>
@@ -31,6 +30,8 @@
     import RadiusView from './RadiusView.svelte';
 
     let selectedUser = "";
+
+    document.title = "Radius Accounts";
 
     const queryString = window.location.search;
 	const urlParams = new URLSearchParams(queryString);

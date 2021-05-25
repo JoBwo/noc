@@ -7,7 +7,8 @@
 
 <div class="inner-app">
 	{#if page === 0}
-		<p>{home}</p>
+		<img src="https://i.imgur.com/yed5Zfk.gif" alt="Unternehmenswerte">
+		<h1>You just got Rick Rolled!</h1>
 	{:else if page === 1}
 		<Radius/>
 	{:else if page === 2}
@@ -19,7 +20,7 @@
 	import Radius from './Radius.svelte';
 	import Contract from './Contract.svelte';
 
-	let page = 0;
+	let page = 1;
 	let home = "Startseite";
 	let radius = "Radius";
 	let contract = "Verträge";
