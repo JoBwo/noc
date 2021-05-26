@@ -25,7 +25,7 @@
 	let radius = "Radius";
 	let contract = "Verträge";
 
-	let baseurl = "https://testing.inspiration-feuerwehr.de/";
+	let baseurl = "http://ilast.io/backend/";
 
 	const queryString = window.location.search;
 	const urlParams = new URLSearchParams(queryString);

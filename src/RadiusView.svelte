@@ -46,7 +46,9 @@
                             <span style="color: red;">{user_logon['logon']}</span>
                         {:else}
                             <span style="color: var(--middle-green);">{user_logon['logon']}, {user_logon['readable']}</span>
+                            {#if user_mac != "NOT_SET"}
                             <button on:click={disconnectUser} class="disconnect">Trennen</button>
+                            {/if}
                         {/if}
                     </p>
                 </div>
@@ -263,7 +265,7 @@
     }
 
     async function disconnectUser(){
-        var data = {username: user_name, action: "disconnect"};
+        var data = {username: user_name, action: "disconnect", nasip: einwahlen[0].nasip, mac: user_mac};
         var fd = new FormData();
         for(var i in data){
             fd.append(i,data[i]);
