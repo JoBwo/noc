@@ -102,6 +102,7 @@
 <script>
 
     export let selectedContract = "";
+    export let baseurl = "";
 
     let newdata = {
         contract: selectedContract,
@@ -133,7 +134,7 @@
         for(var i in data){
             fd.append(i,data[i]);
         }
-		const res = await fetch('https://testing.inspiration-feuerwehr.de/contract.php', {
+		const res = await fetch(baseurl + 'contract.php', {
 			method: 'POST',
             body: fd
 		})
@@ -151,7 +152,7 @@
         for(var i in data){
             fd.append(i,data[i]);
         }
-		const res = await fetch('https://testing.inspiration-feuerwehr.de/contract.php', {
+		const res = await fetch(baseurl + 'contract.php', {
 			method: 'POST',
             body: fd
 		})
@@ -178,7 +179,7 @@
         for(var i in data){
             fd.append(i,data[i]);
         }
-		const res = await fetch('https://testing.inspiration-feuerwehr.de/contract.php', {
+		const res = await fetch(baseurl + 'contract.php', {
 			method: 'POST',
             body: fd
 		})

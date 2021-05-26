@@ -160,6 +160,8 @@
 </div>
 <script>
     export let user_name = "";
+    export let baseurl = "";
+
     let user_cleartext_password = "";
     let user_blocked = "";
     let user_mac = "";
@@ -210,7 +212,7 @@
         for(var i in data){
             fd.append(i,data[i]);
         }
-		const res = await fetch('https://testing.inspiration-feuerwehr.de/radius.php', {
+		const res = await fetch(baseurl + 'radius.php', {
 			method: 'POST',
             body: fd
 		})
@@ -228,7 +230,7 @@
         for(var i in data){
             fd.append(i,data[i]);
         }
-		const res = await fetch('https://testing.inspiration-feuerwehr.de/radius.php', {
+		const res = await fetch(baseurl + 'radius.php', {
 			method: 'POST',
             body: fd
 		})
@@ -266,7 +268,7 @@
         for(var i in data){
             fd.append(i,data[i]);
         }
-		const res = await fetch('https://testing.inspiration-feuerwehr.de/radius.php', {
+		const res = await fetch(baseurl + 'radius.php', {
 			method: 'POST',
             body: fd
 		})
@@ -283,7 +285,7 @@
         for(var i in data){
             fd.append(i,data[i]);
         }
-		const res = await fetch('https://testing.inspiration-feuerwehr.de/radius.php', {
+		const res = await fetch(baseurl + 'radius.php', {
 			method: 'POST',
             body: fd
 		})
@@ -306,7 +308,7 @@
         for(var i in data){
             fd.append(i,data[i]);
         }
-		const res = await fetch('https://testing.inspiration-feuerwehr.de/radius.php', {
+		const res = await fetch(baseurl + 'radius.php', {
 			method: 'POST',
             body: fd
 		})
@@ -322,7 +324,7 @@
         for(var i in data){
             fd.append(i,data[i]);
         }
-		const res = await fetch('https://testing.inspiration-feuerwehr.de/radius.php', {
+		const res = await fetch(baseurl + 'radius.php', {
 			method: 'POST',
             body: fd
 		})
@@ -340,7 +342,7 @@
         for(var i in data){
             fd.append(i,data[i]);
         }
-		const res = await fetch('https://testing.inspiration-feuerwehr.de/radius.php', {
+		const res = await fetch(baseurl + 'radius.php', {
 			method: 'POST',
             body: fd
 		})
@@ -358,7 +360,7 @@
         for(var i in data){
             fd.append(i,data[i]);
         }
-		const res = await fetch('https://testing.inspiration-feuerwehr.de/radius.php', {
+		const res = await fetch(baseurl + 'radius.php', {
 			method: 'POST',
             body: fd
 		})

@@ -4,7 +4,7 @@
 
     {#if selectedUser !== ""}
         <button on:click="{returnToOverview}">&#8592; Zurück zur Übersicht</button>
-        <RadiusView user_name={selectedUser}/>
+        <RadiusView user_name={selectedUser} baseurl={baseurl}/>
     {:else}
         <h2>Radius Accounts</h2>
         <button class="load-button" on:click={queryUsers}>Aktualisieren</button>
@@ -30,6 +30,8 @@
     import RadiusView from './RadiusView.svelte';
 
     let selectedUser = "";
+
+    export let baseurl = "";
 
     document.title = "Radius Accounts";
 
@@ -72,7 +74,7 @@
         for(var i in data){
             fd.append(i,data[i]);
         }
-		const res = await fetch('https://testing.inspiration-feuerwehr.de/radius.php', {
+		const res = await fetch(baseurl + 'radius.php', {
 			method: 'POST',
             body: fd
 		})

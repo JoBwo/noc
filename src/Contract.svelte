@@ -1,7 +1,7 @@
 <div style="overflow: auto; height: 100%;">
 
     {#if selectedContract != ""}
-        <ContractView selectedContract={selectedContract}/>
+        <ContractView selectedContract={selectedContract} baseurl={baseurl}/>
     {:else}
         <h2>Verträge</h2>
         <button on:click={() => loadContract("1")}>Testvertrag öffnen</button>
@@ -14,6 +14,8 @@
     import ContractView from './ContractView.svelte';
 
     let selectedContract = "";
+
+    export let baseurl = "";
 
     document.title = "Verträge";
 

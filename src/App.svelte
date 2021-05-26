@@ -10,9 +10,9 @@
 		<img src="https://i.imgur.com/yed5Zfk.gif" alt="Unternehmenswerte">
 		<h1>You just got Rick Rolled!</h1>
 	{:else if page === 1}
-		<Radius/>
+		<Radius baseurl={baseurl}/>
 	{:else if page === 2}
-		<Contract/>
+		<Contract baseurl={baseurl}/>
 	{/if}
 </div>
 
@@ -24,6 +24,8 @@
 	let home = "Startseite";
 	let radius = "Radius";
 	let contract = "Verträge";
+
+	let baseurl = "https://testing.inspiration-feuerwehr.de/";
 
 	const queryString = window.location.search;
 	const urlParams = new URLSearchParams(queryString);
